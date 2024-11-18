@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flight Distance Validator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="./bellford.js" defer></script>
+    <link rel="stylesheet" href="styles.css">
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAWKY1m0h2NlZh6_WBgowVA87u516kWVfQ&callback=initMap">
+    </script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+</head>
+<body>
+
+<div class="container mt-3">
+    <h2 class="text-center">Flight Distance Validator</h2>
+    <p class="text-center">Enter your route to check if it's the shortest distance.</p>
+
+    <div class="row">
+        <!-- Input area (left side) -->
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label for="startAirport" class="form-label">Starting Airport</label>
+                <select id="startAirport" class="form-select">
+                    <option disabled selected>Where From?</option>
+                    <option value="ATL">ATL - Hartsfield–Jackson Atlanta International Airport</option>
+                    <option value="DFW">DFW - Dallas/Fort Worth International Airport</option>
+                    <option value="LAX">LAX - Los Angeles International Airport</option>
+                    <option value="ORD">ORD - O'Hare International Airport</option>
+                    <option value="DEN">DEN - Denver International Airport</option>
+                    <option value="JFK">JFK - John F. Kennedy International Airport</option>
+                    <option value="SFO">SFO - San Francisco International Airport</option>
+                    <option value="SEA">SEA - Seattle–Tacoma International Airport</option>
+                    <option value="MIA">MIA - Miami International Airport</option>
+                    <option value="CLT">CLT - Charlotte Douglas International Airport</option>
+                </select>
+            </div>
+            
+            <div class="mb-3">
+                <label for="endAirport" class="form-label">Destination Airport</label>
+                <select id="endAirport" class="form-select">
+                    <option disabled selected>Where To?</option>
+                    <option value="ATL">ATL - Hartsfield–Jackson Atlanta International Airport</option>
+                    <option value="DFW">DFW - Dallas/Fort Worth International Airport</option>
+                    <option value="LAX">LAX - Los Angeles International Airport</option>
+                    <option value="ORD">ORD - O'Hare International Airport</option>
+                    <option value="DEN">DEN - Denver International Airport</option>
+                    <option value="JFK">JFK - John F. Kennedy International Airport</option>
+                    <option value="SFO">SFO - San Francisco International Airport</option>
+                    <option value="SEA">SEA - Seattle–Tacoma International Airport</option>
+                    <option value="MIA">MIA - Miami International Airport</option>
+                    <option value="CLT">CLT - Charlotte Douglas International Airport</option>
+                </select>
+            </div>
+            
+            <div class="mb-3">
+                <label for="userRoute" class="form-label">Enter Your Route (comma-separated)</label>
+                <input type="text" id="userRoute" class="form-control" placeholder="e.g., DEN,ORD,MIA">
+            </div>
+
+            <button class="btn btn-primary w-100" onclick="validateRoute()">Validate Route</button>
+        </div>
+
+        <div class="col-md-6">
+            <div id="chart_div" style="width: 100%;"></div>
+        </div>
+        
+    </div>
+
+    <!-- ADD THE MAP HERE -->
+     <!-- Map Container -->
+     <div style="margin-top: 3rem;margin-bottom: 1.3rem;" id="map"></div>
+                
+</div>
+
+</body>
+</html>
