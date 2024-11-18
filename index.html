@@ -1,3 +1,6 @@
+<!-- Name: Alhagie Boye, Sukhbir Singh & Vamsi Sudersanam -->
+<!-- Class: CSC 3310 - Algorithms -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,12 +12,8 @@
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script src="./bellford.js" defer></script>
     <link rel="stylesheet" href="styles.css">
-    <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAWKY1m0h2NlZh6_WBgowVA87u516kWVfQ&callback=initMap">
-    </script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>s
 </head>
 <body>
 
@@ -23,8 +22,9 @@
     <p class="text-center">Enter your route to check if it's the shortest distance.</p>
 
     <div class="row">
-        <!-- Input area (left side) -->
+        <!-- Input Area -->
         <div class="col-md-6">
+            <!-- departure: options selections -->
             <div class="mb-3">
                 <label for="startAirport" class="form-label">Starting Airport</label>
                 <select id="startAirport" class="form-select">
@@ -41,7 +41,7 @@
                     <option value="CLT">CLT - Charlotte Douglas International Airport</option>
                 </select>
             </div>
-            
+            <!-- arrival: options selections -->
             <div class="mb-3">
                 <label for="endAirport" class="form-label">Destination Airport</label>
                 <select id="endAirport" class="form-select">
@@ -59,23 +59,25 @@
                 </select>
             </div>
             
+            <!-- user propose route input field  -->
             <div class="mb-3">
                 <label for="userRoute" class="form-label">Enter Your Route (comma-separated)</label>
                 <input type="text" id="userRoute" class="form-control" placeholder="e.g., DEN,ORD,MIA">
             </div>
 
+            <!-- button to validate user route -->
             <button class="btn btn-primary w-100" onclick="validateRoute()">Validate Route</button>
         </div>
 
+        <!-- table to display the results from the algorithm -->
         <div class="col-md-6">
             <div id="chart_div" style="width: 100%;"></div>
         </div>
         
     </div>
 
-    <!-- ADD THE MAP HERE -->
-     <!-- Map Container -->
-     <div style="margin-top: 3rem;margin-bottom: 1.3rem;" id="map"></div>
+    <!-- Leeflet map to display the result -->
+    <div style="margin-top: 3rem;margin-bottom: 1.3rem;" id="map"></div>
                 
 </div>
 

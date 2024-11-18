@@ -1,10 +1,13 @@
-// Load the Google Charts library and set up callback
+// Names: Alhagie Boye, Sukhbir Singh, Vamsi Sudersanam
+// Class: CSC 3310 - Algorithms
+
+// Setting up the Google Charts library and creating a callback function
 google.charts.load('current', {packages: ['corechart']});
 google.charts.setOnLoadCallback(() => {
     window.chartsLoaded = true; 
 });
 
-// Define the graph with distances between airports
+// Graph with distances between airports
 const graph = {
   'ATL': {
       'DFW': 731, 'LAX': 1946, 'ORD': 606, 'DEN': 1199, 'JFK': 760,
@@ -49,7 +52,7 @@ const graph = {
 };
 
 
-// Modified Bellman-Ford Algorithm to track paths
+// Our modified bellman-ford algorithm function
 function bellmanFord(graph, start, end) {
     const distances = {};
     const predecessors = {}; 
@@ -84,6 +87,7 @@ function bellmanFord(graph, start, end) {
     };
 }
 
+// Function to calculate the distance of a route
 function calculateRouteDistance(graph, route) {
     let totalDistance = 0;
     for (let i = 0; i < route.length - 1; i++) {
@@ -98,37 +102,15 @@ function calculateRouteDistance(graph, route) {
     return totalDistance;
 }
 
-// Validate and display results
-function validateRoute() {
-    const startAirport = document.getElementById("startAirport").value;
-    const endAirport = document.getElementById("endAirport").value;
-    const userRoute = document.getElementById("userRoute").value.split(',').map(a => a.trim());
-
-    if (userRoute[0] !== startAirport || userRoute[userRoute.length - 1] !== endAirport) {
-        alert("Error: Your route must start at " + startAirport + " and end at " + endAirport + ".");
-        return;
-    }
-
-    const { distance: shortestDistance, path: shortestPath } = bellmanFord(graph, startAirport, endAirport);
-    const userDistance = calculateRouteDistance(graph, userRoute);
-
-    if (shortestDistance === null || shortestPath === null) {
-        alert("Error: No path exists between the selected airports.");
-    } else if (userDistance === null) {
-        alert("Error: No direct connection between some airports in your route.");
-    } else {
-        drawTable(userRoute, userDistance, shortestPath, shortestDistance, startAirport, endAirport);
-    }
-}
-
+// Function to draw the table. The table will display the user's route and the algorithm's routes.
 function drawTable(userRoute, userDistance, shortestPath, shortestDistance, start, end) {
   const tableContainer = document.getElementById('chart_div');
-  tableContainer.innerHTML = ''; // Clear any previous table
+  tableContainer.innerHTML = ''; 
 
   const table = document.createElement('table');
   table.classList.add('table', 'table-striped', 'table-bordered', 'mt-4');
 
-  // Create table headers
+  // table headers
   const headers = ['Route Description', 'Distance (miles)'];
   const thead = document.createElement('thead');
   const headerRow = document.createElement('tr');
@@ -140,7 +122,7 @@ function drawTable(userRoute, userDistance, shortestPath, shortestDistance, star
   thead.appendChild(headerRow);
   table.appendChild(thead);
 
-  // Create table body
+  // table body
   const tbody = document.createElement('tbody');
 
   // User's Proposed Route
@@ -199,7 +181,7 @@ function drawTable(userRoute, userDistance, shortestPath, shortestDistance, star
   tableContainer.appendChild(table);
 }
 
-// GOOGLE MAP
+// LEEFLET MAP: Credit to OpenStreetMap, from DR Lembke
 // Airport coordinates
 const airportCoordinates = {
     'ATL': [33.6407, -84.4277],
@@ -214,8 +196,8 @@ const airportCoordinates = {
     'CLT': [35.2144, -80.9473]
 };
 
-// Initialize map
-let map = L.map('map').setView([39.8283, -98.5795], 4); // Center of US
+// Initialize map to the center of the US
+let map = L.map('map').setView([39.8283, -98.5795], 4); 
 
 // Add the OpenStreetMap tiles
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -253,6 +235,7 @@ function drawRoute(route, color) {
     });
 }
 
+// Validate the route and display the results
 function validateRoute() {
     const startAirport = document.getElementById("startAirport").value;
     const endAirport = document.getElementById("endAirport").value;
@@ -281,7 +264,7 @@ function validateRoute() {
         // Draw user's route in blue
         drawRoute(userRoute, 'red');
         
-        // Draw shortest path in red after a delay
+        // shortest path in red after a delay
         setTimeout(() => {
             drawRoute(shortestPath, 'green');
         }, 1000);
