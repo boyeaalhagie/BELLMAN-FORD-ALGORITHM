@@ -65,8 +65,6 @@ const graph = {
   }
 };
 
-
-
 // Our modified bellman-ford algorithm function
 // NOTE: WE WILL NEED TO OPTIMISE THE ALGORITHM TO HANDLE MULTIPLE ROUTES AND AIRPORTS
 function bellmanFord(graph, start, end) {
@@ -102,7 +100,6 @@ function bellmanFord(graph, start, end) {
         path: path.length > 1 ? path : null
     };
 }
-
 
 
 // Function to calculate the distance of a route
