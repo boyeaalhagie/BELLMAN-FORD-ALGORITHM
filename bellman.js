@@ -65,8 +65,10 @@ const graph = {
   }
 };
 
+
+
 // Our modified bellman-ford algorithm function
-// NOTE: OPTIMISE THE ALGORITHM TO HANDLE MULTIPLE ROUTES AND AIRPORTS
+// NOTE: WE WILL NEED TO OPTIMISE THE ALGORITHM TO HANDLE MULTIPLE ROUTES AND AIRPORTS
 function bellmanFord(graph, start, end) {
     const distances = {};
     const predecessors = {}; 
@@ -101,6 +103,8 @@ function bellmanFord(graph, start, end) {
     };
 }
 
+
+
 // Function to calculate the distance of a route
 function calculateRouteDistance(graph, route) {
     let totalDistance = 0;
@@ -113,9 +117,10 @@ function calculateRouteDistance(graph, route) {
             return null;
         }
     }
-    console.log("Total Distance: " + totalDistance);
     return totalDistance;
 }
+
+
 
 // Function to draw the table. The table will display the user's route and the algorithm's routes.
 function drawTable(userRoute, userDistance, shortestPath, shortestDistance, start, end) {
@@ -209,6 +214,10 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 let routeLayer = L.layerGroup().addTo(map);
 let markersLayer = L.layerGroup().addTo(map);
 
+
+
+
+// Helps draw the route on the map
 function drawRoute(route, color) {
     // Clear previous routes of this color
     routeLayer.eachLayer((layer) => {
@@ -217,7 +226,7 @@ function drawRoute(route, color) {
         }
     });
 
-    // Create array of coordinates for the route
+    // Coordinates for the route
     const coordinates = route.map(airport => airportCoordinates[airport]);
     
     // Draw the route line
@@ -255,37 +264,46 @@ function validateRoute() {
     } else if (userDistance === null) {
         alert("Error: No direct connection between some airports in your route.");
     } else {
-        // Clear previous markers and routes
         markersLayer.clearLayers();
         routeLayer.clearLayers();
 
-        // Draw table
-        drawTable(userRoute, userDistance, shortestPath, shortestDistance, startAirport, endAirport);
-        
-        // Draw user's route in blue
-        drawRoute(userRoute, 'red');
-        
-        // shortest path in red after a delay
-        setTimeout(() => {
-            drawRoute(shortestPath, 'green');
-        }, 1000);
+        // All other possible routes with one connecting flight
+        const otherRoutes = [];
+        for (let connecting in graph[startAirport]) {
+            if (connecting !== endAirport && graph[connecting] && graph[connecting][endAirport] !== undefined) {
+                const connectingRoute = [startAirport, connecting, endAirport];
+                const connectingDistance = graph[startAirport][connecting] + graph[connecting][endAirport];
 
-        // Fit the map to show all markers
-        const allCoords = [...userRoute, ...shortestPath].map(airport => airportCoordinates[airport]);
-        map.fitBounds(allCoords);
+                // Exclude user's route
+                if (connectingRoute.join(' -> ') !== userRoute.join(' -> ')) {
+                    otherRoutes.push({
+                        route: connectingRoute,
+                        distance: connectingDistance
+                    });
+                }
+            }
+        }
+
+        
+        otherRoutes.sort((a, b) => a.distance - b.distance);
+
+        const thirdRoute = otherRoutes.length > 0 ? otherRoutes[0].route : null;
+
+        drawTable(userRoute, userDistance, shortestPath, shortestDistance, startAirport, endAirport);
+        drawRoute(userRoute, 'red');
+
+        // The route from the 3rd column in green after a delay: I am manually using this because the shortest path is always the direct slight and I want to show the user the shortest connecting route
+        if (thirdRoute) {
+            setTimeout(() => {
+                drawRoute(thirdRoute, 'green');
+                map.fitBounds(thirdRoute.map(airport => airportCoordinates[airport]));
+            }, 1000);
+        } else {
+            alert("No connecting routes found.");
+        }
     }
 }
 
-// Initialize the map when the page loads
-document.addEventListener('DOMContentLoaded', () => {
-    const map = L.map('map').setView([39.8283, -98.5795], 4); // Centered on the US
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '© OpenStreetMap contributors'
-    }).addTo(map);
 
-    setTimeout(() => {
-        map.invalidateSize();
-    }, 100);
-});
+
