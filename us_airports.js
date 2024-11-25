@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const headerRow = document.createElement('tr');
 
     // table headers
-    const headers = ['ICAO', 'IATA', 'Name', 'City', 'State', 'Country', 'Latitude', 'Longitude'];
+    const headers = [ 'IATA', 'Name', 'City', 'State', 'Latitude', 'Longitude'];
     headers.forEach(headerText => {
       const header = document.createElement('th');
       header.textContent = headerText;
@@ -45,8 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const row = document.createElement('tr');
 
       const cells = [
-        airport.icao, airport.iata, airport.name, airport.city, airport.state,
-        airport.country, airport.lat, airport.lon, 
+        airport.iata, airport.name, airport.city, airport.state, airport.lat, airport.lon, 
       ];
 
       cells.forEach(cellText => {
