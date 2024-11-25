@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-  fetch('./airports.json')
+  fetch('./us_airports.json')
     .then(response => response.json())
     .then(data => {
       const usAirports = filterUSAirports(data);
@@ -61,8 +61,9 @@ document.addEventListener('DOMContentLoaded', () => {
     tableContainer.appendChild(table);
   }
 
+  // HAVERSINE FORMULA: calcculate distance between two airports given their latitude and longitude
   function calculateDistance(lat1, lon1, lat2, lon2) {
-    const earthRadius = 6371; 
+    const earthRadius = 3959; 
     const dLat = toRadians(lat2 - lat1);
     const dLon = toRadians(lon2 - lon1);
     const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
@@ -76,7 +77,8 @@ document.addEventListener('DOMContentLoaded', () => {
   function toRadians(degrees) {
     return degrees * Math.PI / 180;
   }
-  console.log(calculateDistance(39.8616, -104.6729, 25.7931, -80.2906));
+
+  console.log('The distance between ORD - JFK is:', calculateDistance(41.9786, -87.9048, 40.6397, -73.7789));
 
 
 });

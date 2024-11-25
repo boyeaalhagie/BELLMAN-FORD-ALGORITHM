@@ -69,37 +69,61 @@ const graph = {
 // NOTE: WE WILL NEED TO OPTIMISE THE ALGORITHM TO HANDLE MULTIPLE ROUTES AND AIRPORTS
 function bellmanFord(graph, start, end) {
     const distances = {};
-    const predecessors = {}; 
+    const predecessors = {};
 
+    console.log("Initialization:");
     for (let node in graph) {
         distances[node] = Infinity;
         predecessors[node] = null;
+        console.log(`Node: ${node}, Distance: Infinity, Predecessor: null`);
     }
     distances[start] = 0;
+    console.log(`Start Node '${start}' Distance set to 0`);
 
+    console.log("\nRelaxation Process:");
     for (let i = 0; i < Object.keys(graph).length - 1; i++) {
+        console.log(`Iteration ${i + 1}:`);
         for (let u in graph) {
             for (let v in graph[u]) {
-                if (distances[u] + graph[u][v] < distances[v]) {
-                    distances[v] = distances[u] + graph[u][v];
+                const newDistance = distances[u] + graph[u][v];
+                if (newDistance < distances[v]) {
+                    console.log(
+                        `Relaxing edge (${u} -> ${v}), New Distance: ${newDistance}, Old Distance: ${distances[v]}`
+                    );
+                    distances[v] = newDistance;
                     predecessors[v] = u;
+                    console.log('airport distance updated',distances[v],'\n');
+                } else {
+                    console.log(`Edge (${u} -> ${v}) not relaxed.`);
+                    console.log(distances[v], '+', graph[u][v], '>', distances[v], '\n');
                 }
             }
         }
+        console.log(`Distances after Iteration ${i + 1}:`, distances);
+        console.log(`Predecessors after Iteration ${i + 1}:`, predecessors);
     }
 
+    console.log("\nPath Reconstruction:");
     let path = [];
     let current = end;
     while (current) {
         path.unshift(current);
+        console.log(`Tracing back: Current Node: ${current}, Predecessor: ${predecessors[current]}`);
         current = predecessors[current];
     }
 
-    return {
+    const result = {
         distance: distances[end] !== Infinity ? distances[end] : null,
         path: path.length > 1 ? path : null
     };
+
+    console.log("\nFinal Results:");
+    console.log(`Shortest Distance from '${start}' to '${end}':`, result.distance);
+    console.log(`Shortest Path from '${start}' to '${end}':`, result.path);
+
+    return result;
 }
+
 
 
 // Function to calculate the distance of a route
