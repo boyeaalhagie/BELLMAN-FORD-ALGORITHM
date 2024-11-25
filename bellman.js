@@ -289,6 +289,8 @@ function validateRoute() {
         drawTable(userRoute, userDistance, shortestPath, shortestDistance, startAirport, endAirport);
         drawRoute(userRoute, 'red');
 
+        // hello
+
         // The route from the 3rd column in green after a delay: I am manually using this because the shortest path is always the direct slight and I want to show the user the shortest connecting route
         if (thirdRoute) {
             setTimeout(() => {
