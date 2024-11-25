@@ -82,7 +82,7 @@ function bellmanFord(graph, start, end) {
 
     console.log("\nRelaxation Process:");
     for (let i = 0; i < Object.keys(graph).length - 1; i++) {
-        console.log(`Iteration ${i + 1}:`);
+        console.log(`\nIteration ${i + 1}:`);
         for (let u in graph) {
             for (let v in graph[u]) {
                 const newDistance = distances[u] + graph[u][v];
@@ -95,7 +95,7 @@ function bellmanFord(graph, start, end) {
                     console.log('airport distance updated',distances[v],'\n');
                 } else {
                     console.log(`Edge (${u} -> ${v}) not relaxed.`);
-                    console.log(distances[v], '+', graph[u][v], '>', distances[v], '\n');
+                    console.log(distances[u], '+', graph[u][v], '>', distances[v], '\n');
                 }
             }
         }
@@ -123,24 +123,6 @@ function bellmanFord(graph, start, end) {
 
     return result;
 }
-
-
-
-// Function to calculate the distance of a route
-function calculateRouteDistance(graph, route) {
-    let totalDistance = 0;
-    for (let i = 0; i < route.length - 1; i++) {
-        const start = route[i];
-        const end = route[i + 1];
-        if (graph[start] && graph[start][end] !== undefined) {
-            totalDistance += graph[start][end];
-        } else {
-            return null;
-        }
-    }
-    return totalDistance;
-}
-
 
 
 // Function to draw the table. The table will display the user's route and the algorithm's routes.
