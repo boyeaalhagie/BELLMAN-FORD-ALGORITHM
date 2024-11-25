@@ -95,7 +95,7 @@ function bellmanFord(graph, start, end) {
                     console.log('airport distance updated',distances[v],'\n');
                 } else {
                     console.log(`Edge (${u} -> ${v}) not relaxed.`);
-                    console.log(distances[u], '+', graph[u][v], '>', distances[v], '\n');
+                    console.log(distances[u], '+', graph[u][v], '>', distances[v]);
                 }
             }
         }
