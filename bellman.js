@@ -125,6 +125,23 @@ function bellmanFord(graph, start, end) {
 }
 
 
+// Function to calculate the distance of a route
+function calculateRouteDistance(graph, route) {
+    let totalDistance = 0;
+    for (let i = 0; i < route.length - 1; i++) {
+        const start = route[i];
+        const end = route[i + 1];
+        if (graph[start] && graph[start][end] !== undefined) {
+            totalDistance += graph[start][end];
+        } else {
+            return null;
+        }
+    }
+    return totalDistance;
+}
+
+
+
 // Function to draw the table. The table will display the user's route and the algorithm's routes.
 function drawTable(userRoute, userDistance, shortestPath, shortestDistance, start, end) {
   const tableContainer = document.getElementById('chart_div');
