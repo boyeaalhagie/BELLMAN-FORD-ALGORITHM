@@ -7,13 +7,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shortest</title>
-    <link rel="icon" href="./flight.ico" type="image/x-icon">
+    <link rel="icon" href="./other/flight.ico" type="image/x-icon">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script src="./bellman.js" defer></script>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
 </head>
 <body>
 
@@ -24,40 +25,20 @@
     <div class="row">
         <!-- Input Area -->
         <div class="col-md-6">
-            <!-- departure: options selections -->
             <div class="mb-3">
                 <label for="startAirport" class="form-label">Starting Airport</label>
                 <select id="startAirport" class="form-select">
                     <option disabled selected>Where From?</option>
-                    <option value="ATL">ATL - Hartsfield–Jackson Atlanta International Airport</option>
-                    <option value="DFW">DFW - Dallas/Fort Worth International Airport</option>
-                    <option value="LAX">LAX - Los Angeles International Airport</option>
-                    <option value="ORD">ORD - O'Hare International Airport</option>
-                    <option value="DEN">DEN - Denver International Airport</option>
-                    <option value="JFK">JFK - John F. Kennedy International Airport</option>
-                    <option value="SFO">SFO - San Francisco International Airport</option>
-                    <option value="SEA">SEA - Seattle–Tacoma International Airport</option>
-                    <option value="MIA">MIA - Miami International Airport</option>
-                    <option value="CLT">CLT - Charlotte Douglas International Airport</option>
                 </select>
             </div>
-            <!-- arrival: options selections -->
+            
             <div class="mb-3">
                 <label for="endAirport" class="form-label">Destination Airport</label>
                 <select id="endAirport" class="form-select">
                     <option disabled selected>Where To?</option>
-                    <option value="ATL">ATL - Hartsfield–Jackson Atlanta International Airport</option>
-                    <option value="DFW">DFW - Dallas/Fort Worth International Airport</option>
-                    <option value="LAX">LAX - Los Angeles International Airport</option>
-                    <option value="ORD">ORD - O'Hare International Airport</option>
-                    <option value="DEN">DEN - Denver International Airport</option>
-                    <option value="JFK">JFK - John F. Kennedy International Airport</option>
-                    <option value="SFO">SFO - San Francisco International Airport</option>
-                    <option value="SEA">SEA - Seattle–Tacoma International Airport</option>
-                    <option value="MIA">MIA - Miami International Airport</option>
-                    <option value="CLT">CLT - Charlotte Douglas International Airport</option>
                 </select>
             </div>
+            
             
             <!-- user propose route input field  -->
             <div class="mb-3">
@@ -77,7 +58,7 @@
     </div>
 
     <!-- Leeflet map to display the result -->
-    <div style="margin-top: 3rem;margin-bottom: 1.3rem;" id="map"></div>
+    <div style="margin-top: 2rem;margin-bottom: 1.3rem;" id="map"></div>
                 
 </div>
 

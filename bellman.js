@@ -7,64 +7,79 @@ google.charts.setOnLoadCallback(() => {
     window.chartsLoaded = true; 
 });
 
-// Our 10 airport coordinates
-const airportCoordinates = {
-    'ATL': [33.6407, -84.4277],
-    'DFW': [32.8998, -97.0403],
-    'LAX': [33.9416, -118.4085],
-    'ORD': [41.9742, -87.9073],
-    'DEN': [39.8561, -104.6737],
-    'JFK': [40.6413, -73.7781],
-    'SFO': [37.7749, -122.4194],
-    'SEA': [47.4502, -122.3088],
-    'MIA': [25.7959, -80.2870],
-    'CLT': [35.2144, -80.9473]
-};
+// Fetch the data and populate the dropdowns
+fetch('./airports_data.json')
+    .then(response => response.json())
+    .then(data => {
+        data.sort((a, b) => a.NAME.localeCompare(b.NAME));
+        // Populate the dropdowns with airport data
+        populateDropdown('startAirport', data);
+        populateDropdown('endAirport', data);
 
-// Graph with distances between airports
-const graph = {
-  'ATL': {
-      'DFW': 731, 'LAX': 1946, 'ORD': 606, 'DEN': 1199, 'JFK': 760,
-      'SFO': 2139, 'SEA': 2182, 'MIA': 595, 'CLT': 226
-  },
-  'DFW': {
-      'ATL': 731, 'LAX': 1235, 'ORD': 802, 'DEN': 641, 'JFK': 1391,
-      'SFO': 1464, 'SEA': 1670, 'MIA': 1121, 'CLT': 936
-  },
-  'LAX': {
-      'ATL': 1946, 'DFW': 1235, 'ORD': 1744, 'DEN': 862, 'JFK': 2475,
-      'SFO': 337, 'SEA': 954, 'MIA': 2342, 'CLT': 2113
-  },
-  'ORD': {
-      'ATL': 606, 'DFW': 802, 'LAX': 1744, 'DEN': 888, 'JFK': 740,
-      'SFO': 1846, 'SEA': 1720, 'MIA': 1197, 'CLT': 599
-  },
-  'DEN': {
-      'ATL': 1199, 'DFW': 641, 'LAX': 862, 'ORD': 888, 'JFK': 1620,
-      'SFO': 967, 'SEA': 1024, 'MIA': 1729, 'CLT': 1402
-  },
-  'JFK': {
-      'ATL': 760, 'DFW': 1391, 'LAX': 2475, 'ORD': 740, 'DEN': 1620,
-      'SFO': 2586, 'SEA': 2422, 'MIA': 1090, 'CLT': 541
-  },
-  'SFO': {
-      'ATL': 2139, 'DFW': 1464, 'LAX': 337, 'ORD': 1846, 'DEN': 967,
-      'JFK': 2586, 'SEA': 679, 'MIA': 2584, 'CLT': 2295
-  },
-  'SEA': {
-      'ATL': 2182, 'DFW': 1670, 'LAX': 954, 'ORD': 1720, 'DEN': 1024,
-      'JFK': 2422, 'SFO': 679, 'MIA': 2724, 'CLT': 2280
-  },
-  'MIA': {
-      'ATL': 595, 'DFW': 1121, 'LAX': 2342, 'ORD': 1197, 'DEN': 1729,
-      'JFK': 1090, 'SFO': 2584, 'SEA': 2724, 'CLT': 650
-  },
-  'CLT': {
-      'ATL': 226, 'DFW': 936, 'LAX': 2113, 'ORD': 599, 'DEN': 1402,
-      'JFK': 541, 'SFO': 2295, 'SEA': 2280, 'MIA': 650
-  }
-};
+        // Populate graph and coordinates after loading data
+        data.forEach(airport => {
+            airportCoordinates[airport.IATA] = [airport.LAT, airport.LONG];
+        });
 
+        graph = buildGraph(data);
+        
+    })
+    .catch(error => {
+        console.error('Error loading airport data:', error);
+    });
+    
+let airportCoordinates = {};
+let graph = {};
+
+// Haversine formula to calculate distance between two coordinates
+function calculateDistance(lat1, lon1, lat2, lon2) {
+    const earthRadius = 3959; // Earth's radius in miles
+    const dLat = toRadians(lat2 - lat1);
+    const dLon = toRadians(lon2 - lon1);
+    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    distance = earthRadius * c;
+    return Math.round(distance);
+}
+
+function toRadians(degrees) {
+    return degrees * Math.PI / 180;
+}
+
+// Dynamically build graph from airport data
+function buildGraph(airports) {
+    const graph = {};
+    airports.forEach((source) => {
+        graph[source.IATA] = {};
+        airports.forEach((destination) => {
+            if (source.IATA !== destination.IATA) {
+                const distance = calculateDistance(
+                    source.LAT, source.LONG,
+                    destination.LAT, destination.LONG
+                );
+                graph[source.IATA][destination.IATA] = distance;
+            }
+        });
+    });
+    return graph;
+}
+
+// Function to populate a dropdown with airport options
+function populateDropdown(selectorId, airports) {
+    const dropdown = document.getElementById(selectorId);
+
+    airports.forEach(airport => {
+        const option = document.createElement('option');
+        option.value = airport.IATA;
+        option.textContent = `${airport.IATA} - ${airport.NAME}`;
+        dropdown.appendChild(option);
+    });
+}
+
+
+    
 // Our modified bellman-ford algorithm function
 // NOTE: WE WILL NEED TO OPTIMISE THE ALGORITHM TO HANDLE MULTIPLE ROUTES AND AIRPORTS
 function bellmanFord(graph, start, end) {
@@ -183,19 +198,31 @@ function drawTable(userRoute, userDistance, shortestPath, shortestDistance, star
   otherRoutes.sort((a, b) => a.distance - b.distance);
 
   // Append sorted other routes to the table
-  otherRoutes.forEach(route => {
-      row = document.createElement('tr');
-      cell = document.createElement('td');
-      cell.textContent = route.description;
-      row.appendChild(cell);
-      cell = document.createElement('td');
-      cell.textContent = route.distance;
-      row.appendChild(cell);
-      tbody.appendChild(row);
-  });
+  // Limit the table height and make it scrollable
+    tableContainer.style.maxHeight = '300px'; // Adjust height as needed
+    tableContainer.style.overflowY = 'auto';// Enables scrolling
+    tableContainer.style.overflowX = 'hidden';
 
-  table.appendChild(tbody);
-  tableContainer.appendChild(table);
+    // Append all sorted other routes to the table, but only show the first four initially
+    otherRoutes.forEach((route, index) => {
+        const row = document.createElement('tr');
+        let cell = document.createElement('td');
+        cell.textContent = route.description;
+        row.appendChild(cell);
+        cell = document.createElement('td');
+        cell.textContent = route.distance;
+        row.appendChild(cell);
+        tbody.appendChild(row);
+
+        // Highlight the first four rows
+        if (index < 6) {
+            row.style.backgroundColor = '#f9f9f9'; // Optional: Add styling for the first four rows
+        }
+    });
+
+    table.appendChild(tbody);
+    tableContainer.appendChild(table);
+
 }
 
 // LEEFLET MAP: Credit to OpenStreetMap, from DR Lembke
