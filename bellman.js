@@ -2,17 +2,16 @@
 // Class: CSC 3310 - Algorithms
 
 // Setting up the Google Charts library and creating a callback function
-google.charts.load('current', {packages: ['corechart']});
+google.charts.load('current', { packages: ['corechart'] });
 google.charts.setOnLoadCallback(() => {
-    window.chartsLoaded = true; 
+    window.chartsLoaded = true;
 });
 
-// Fetch the data and populate the dropdowns
-fetch('./airports_data.json')
+
+fetch('60_airports.json')
     .then(response => response.json())
     .then(data => {
         data.sort((a, b) => a.NAME.localeCompare(b.NAME));
-        // Populate the dropdowns with airport data
         populateDropdown('startAirport', data);
         populateDropdown('endAirport', data);
 
@@ -22,12 +21,12 @@ fetch('./airports_data.json')
         });
 
         graph = buildGraph(data);
-        
+
     })
     .catch(error => {
         console.error('Error loading airport data:', error);
     });
-    
+
 let airportCoordinates = {};
 let graph = {};
 
@@ -79,12 +78,12 @@ function populateDropdown(selectorId, airports) {
 }
 
 
-    
+
 // Our modified bellman-ford algorithm function
 // NOTE: WE WILL NEED TO OPTIMISE THE ALGORITHM TO HANDLE MULTIPLE ROUTES AND AIRPORTS
 function bellmanFord(graph, start, end) {
     const distances = {};
-    const predecessors = {}; 
+    const predecessors = {};
 
     for (let node in graph) {
         distances[node] = Infinity;
@@ -136,98 +135,104 @@ function calculateRouteDistance(graph, route) {
 
 // Function to draw the table. The table will display the user's route and the algorithm's routes.
 function drawTable(userRoute, userDistance, shortestPath, shortestDistance, start, end) {
-  const tableContainer = document.getElementById('chart_div');
-  tableContainer.innerHTML = ''; 
+    const tableContainer = document.getElementById('chart_div');
+    tableContainer.innerHTML = '';
 
-  const table = document.createElement('table');
-  table.classList.add('table', 'table-striped', 'table-bordered', 'mt-4');
+    // Create a scrollable wrapper for the table
+    const scrollableWrapper = document.createElement('div');
+    scrollableWrapper.style.maxHeight = '285px'; // Adjust height to show the first 6 rows
+    scrollableWrapper.style.overflowY = 'auto'; // Make it scrollable
 
-  // table headers
-  const headers = ['Route Description', 'Distance (miles)'];
-  const thead = document.createElement('thead');
-  const headerRow = document.createElement('tr');
-  headers.forEach(headerText => {
-      const th = document.createElement('th');
-      th.textContent = headerText;
-      headerRow.appendChild(th);
-  });
-  thead.appendChild(headerRow);
-  table.appendChild(thead);
+    const table = document.createElement('table');
+    table.classList.add('table', 'table-striped', 'table-bordered');
 
-  // table body
-  const tbody = document.createElement('tbody');
+    // Table headers
+    const headers = ['Route Description', 'Distance (miles)'];
+    const thead = document.createElement('thead');
+    const headerRow = document.createElement('tr');
+    headers.forEach(headerText => {
+        const th = document.createElement('th');
+        th.textContent = headerText;
+        headerRow.appendChild(th);
+    });
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
 
-  // User's Proposed Route
-  let row = document.createElement('tr');
-  let cell = document.createElement('td');
-  cell.textContent = `User's Route: ${userRoute.join(' -> ')}`;
-  row.appendChild(cell);
-  cell = document.createElement('td');
-  cell.textContent = userDistance;
-  row.appendChild(cell);
-  tbody.appendChild(row);
+    // Table body
+    const tbody = document.createElement('tbody');
 
-  // Shortest Route
-  row = document.createElement('tr');
-  cell = document.createElement('td');
-  cell.textContent = `Direct Route: ${shortestPath.join(' -> ')}`;
-  row.appendChild(cell);
-  cell = document.createElement('td');
-  cell.textContent = shortestDistance;
-  row.appendChild(cell);
-  tbody.appendChild(row);
+    // Add row for User's Proposed Route
+    let row = document.createElement('tr');
+    row.classList.add('clickable-route');
+    row.dataset.route = JSON.stringify(userRoute); // Store the route in dataset
+    let cell = document.createElement('td');
+    cell.textContent = `User's Route: ${userRoute.join(' -> ')}`;
+    row.appendChild(cell);
+    cell = document.createElement('td');
+    cell.textContent = userDistance;
+    row.appendChild(cell);
+    tbody.appendChild(row);
 
-  // Collect all other possible routes with one connecting flight (excluding user’s route)
-  const otherRoutes = [];
-  for (let connecting in graph[start]) {
-      if (connecting !== end && graph[connecting] && graph[connecting][end] !== undefined) {
-          const connectingRoute = [start, connecting, end];
-          const connectingDistance = graph[start][connecting] + graph[connecting][end];
+    // Add row for Shortest Route
+    row = document.createElement('tr');
+    row.classList.add('clickable-route');
+    row.dataset.route = JSON.stringify(shortestPath); // Store the route in dataset
+    cell = document.createElement('td');
+    cell.textContent = `Direct Route: ${shortestPath.join(' -> ')}`;
+    row.appendChild(cell);
+    cell = document.createElement('td');
+    cell.textContent = shortestDistance;
+    row.appendChild(cell);
+    tbody.appendChild(row);
 
-          // Check if this route matches the user's route
-          if (connectingRoute.join(' -> ') !== userRoute.join(' -> ')) {
-              otherRoutes.push({
-                  description: `Connecting Route: ${connectingRoute.join(' -> ')}`,
-                  distance: connectingDistance
-              });
-          }
-      }
-  }
+    // Add rows for other possible routes
+    const otherRoutes = [];
+    for (let connecting in graph[start]) {
+        if (connecting !== end && graph[connecting] && graph[connecting][end] !== undefined) {
+            const connectingRoute = [start, connecting, end];
+            const connectingDistance = graph[start][connecting] + graph[connecting][end];
 
-  // Sort the other routes by distance in ascending order
-  otherRoutes.sort((a, b) => a.distance - b.distance);
-
-  // Append sorted other routes to the table
-  // Limit the table height and make it scrollable
-    tableContainer.style.maxHeight = '300px'; // Adjust height as needed
-    tableContainer.style.overflowY = 'auto';// Enables scrolling
-    tableContainer.style.overflowX = 'hidden';
-
-    // Append all sorted other routes to the table, but only show the first four initially
-    otherRoutes.forEach((route, index) => {
-        const row = document.createElement('tr');
-        let cell = document.createElement('td');
-        cell.textContent = route.description;
-        row.appendChild(cell);
-        cell = document.createElement('td');
-        cell.textContent = route.distance;
-        row.appendChild(cell);
-        tbody.appendChild(row);
-
-        // Highlight the first four rows
-        if (index < 6) {
-            row.style.backgroundColor = '#f9f9f9'; // Optional: Add styling for the first four rows
+            // Add connecting route
+            otherRoutes.push({
+                route: connectingRoute,
+                distance: connectingDistance
+            });
         }
+    }
+
+    otherRoutes.sort((a, b) => a.distance - b.distance);
+
+    otherRoutes.forEach(routeData => {
+        const routeRow = document.createElement('tr');
+        routeRow.classList.add('clickable-route');
+        routeRow.dataset.route = JSON.stringify(routeData.route); // Store the route in dataset
+        let cell = document.createElement('td');
+        cell.textContent = `Connecting Route: ${routeData.route.join(' -> ')}`;
+        routeRow.appendChild(cell);
+        cell = document.createElement('td');
+        cell.textContent = routeData.distance;
+        routeRow.appendChild(cell);
+        tbody.appendChild(routeRow);
     });
 
     table.appendChild(tbody);
-    tableContainer.appendChild(table);
+    scrollableWrapper.appendChild(table);
+    tableContainer.appendChild(scrollableWrapper);
 
+    // Add event listeners to rows
+    const routeRows = document.querySelectorAll('.clickable-route');
+    routeRows.forEach(row => {
+        row.addEventListener('click', () => {
+            const route = JSON.parse(row.dataset.route); // Parse route from dataset
+            drawRoute(route, 'blue'); // Draw the selected route
+        });
+    });
 }
+
 
 // LEEFLET MAP: Credit to OpenStreetMap, from DR Lembke
 // Initialize map to the center of the US
-let map = L.map('map').setView([39.8283, -98.5795], 4); 
+let map = L.map('map').setView([39.8283, -98.5795], 4);
 
 // Add the OpenStreetMap tiles
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -237,9 +242,6 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 let routeLayer = L.layerGroup().addTo(map);
 let markersLayer = L.layerGroup().addTo(map);
-
-
-
 
 // Helps draw the route on the map
 function drawRoute(route, color) {
@@ -252,7 +254,7 @@ function drawRoute(route, color) {
 
     // Coordinates for the route
     const coordinates = route.map(airport => airportCoordinates[airport]);
-    
+
     // Draw the route line
     L.polyline(coordinates, {
         color: color,
@@ -260,12 +262,27 @@ function drawRoute(route, color) {
         opacity: 0.7
     }).addTo(routeLayer);
 
+    // A custom airplane icon for the starting airport
+    const airplaneIcon = L.icon({
+        iconUrl: './other/airplane-fill.svg',
+        iconSize: [37, 37],
+        iconAnchor: [16, 16], 
+        popupAnchor: [0, -16] 
+    });
+
     // Add markers for each airport in the route
     coordinates.forEach((coord, index) => {
         const airport = route[index];
-        L.marker(coord)
-            .bindPopup(airport)
-            .addTo(markersLayer);
+        if (index === 0) {
+            L.marker(coord, { icon: airplaneIcon })
+                .bindPopup(`${airport} (Starting airport)`)
+                .addTo(markersLayer);
+        } else {
+            // Default marker for other airports
+            L.marker(coord)
+                .bindPopup(airport)
+                .addTo(markersLayer);
+        }
     });
 }
 
@@ -308,7 +325,7 @@ function validateRoute() {
             }
         }
 
-        
+
         otherRoutes.sort((a, b) => a.distance - b.distance);
 
         const thirdRoute = otherRoutes.length > 0 ? otherRoutes[0].route : null;

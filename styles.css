@@ -31,3 +31,30 @@ select {
   overflow-y: auto;
   /* Enable vertical scrolling */
 }
+
+#chart_div {
+  margin-top: 1.5rem;
+  /* Creates initial space */
+  width: 100% !important;
+  cursor: pointer;
+  position: relative;
+  /* Add this to establish positioning context */
+}
+
+#chart_div>div {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  position: static;
+  /* Ensure normal document flow */
+}
+
+/* table header */
+#chart_div thead {
+  position: sticky;
+  top: -1px;
+  /* Stick the header to the top */
+  background-color: #931818;
+  /* Add background color to avoid transparency */
+  z-index: 100;
+  /* Ensure it stays on top of other content */
+}
