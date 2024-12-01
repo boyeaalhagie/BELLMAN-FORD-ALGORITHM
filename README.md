@@ -73,7 +73,7 @@ git clone https://github.com/boyeaalhagie/BELLMAN-FORD-ALGORITHM.git
 ***Flight Schedules***:
 - Add real-time scheduling for flights using airline APIs.
 
-🙌 Acknowledgments
+🙌 **Acknowledgments**
 
 - Leaflet.js for map visualizations.
   
