@@ -10,6 +10,8 @@ Vamsi Sudersanam [sudersanamv@msoe.edu]
 
 Class: CSC 3310 - Algorithms
 
+🌐 **Website**: https://airpath.netlify.app/
+
 📌 **Project Overview**
 
 The Shortest Flight Path Algorithm is a web-based application designed to compute the optimal flight route between two airports based on multiple factors like distance, layovers, and potential extensions for time and cost considerations. The algorithm leverages the Bellman-Ford algorithm to calculate the shortest path and integrates an interactive user interface for validation and visualization of flight paths.
@@ -21,8 +23,6 @@ The Shortest Flight Path Algorithm is a web-based application designed to comput
 ***Dynamic User Input***: Users can select their starting and destination airports from a dropdown menu and validate their custom routes.
 
 ***Interactive Visualization***: Displays routes on an interactive map using Leaflet.js, with markers for airports.
-
-
 
 **🚀 How It Works: Frontend**
 
